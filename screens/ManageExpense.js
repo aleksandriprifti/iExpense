@@ -1,10 +1,12 @@
 import { StyleSheet, View } from "react-native";
-import { useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyle } from "../constants/style";
 import Button from "../components/UI/Button";
+import { ExpensesContext } from "../store/expense-context";
 
 const ManageExpense = ({ route, navigation }) => {
+  const expensesCtx = useContext(ExpensesContext);
   //we use ? in order to check if params is undefined
   const editedExpenseId = route.params?.expenseId;
   // using !! convert a value into a boolena
@@ -18,11 +20,30 @@ const ManageExpense = ({ route, navigation }) => {
   }, [navigation, isEditing]);
 
   const deleteExpenseHandler = () => {
-    console.log("Delete");
+    navigation.goBack();
+    expensesCtx.deleteExpense(editedExpenseId);
   };
 
-  const cancleHandler = () => {};
-  const confirmHandler = () => {};
+  const cancleHandler = () => {
+    //goBack method gets us back to the previous screen
+    navigation.goBack();
+  };
+  const confirmHandler = () => {
+    if (isEditing) {
+      expensesCtx.updateExpense(editedExpenseId, {
+        description: "test!!!",
+        amount: "49.99",
+        date: new Date("2023-08-29"),
+      });
+    } else {
+      expensesCtx.addExpense({
+        description: "test",
+        amount: "19.99",
+        date: new Date("2023-05-19"),
+      });
+    }
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
