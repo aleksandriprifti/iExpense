@@ -7,22 +7,34 @@ import { Ionicons } from "@expo/vector-icons";
 import ManageExpense from "./screens/ManageExpense";
 import AllExpenses from "./screens/AllExpenses";
 import RecentExpenses from "./screens/RecentExpenses";
+
+import IconButton from "./components/UI/IconButton";
 import { GlobalStyle } from "./constants/style";
 
 const Stack = createNativeStackNavigator();
-const BottomTab = createBottomTabNavigator();
+const BottomTabs = createBottomTabNavigator();
 
 const ExpensesOverview = () => {
   return (
-    <BottomTab.Navigator
-      screenOptions={{
+    <BottomTabs.Navigator
+      screenOptions={({ navigation }) => ({
         headerStyle: { backgroundColor: GlobalStyle.colors.primary500 },
         headerTintColor: "white",
-        tabBarStyle: { backgroundColor: GlobalStyle.colors.primary500 },
-        tabBarActiveTintColor: GlobalStyle.colors.accent500,
-      }}
+        toBarStyle: { backgroundColor: GlobalStyle.colors.primary500 },
+        toBarActiveTintColor: GlobalStyle.colors.accent500,
+        headerRight: ({ tintColor }) => (
+          <IconButton
+            icon="add"
+            size={24}
+            color={tintColor}
+            onPress={() => {
+              navigation.navigate("ManageExpense");
+            }}
+          />
+        ),
+      })}
     >
-      <BottomTab.Screen
+      <BottomTabs.Screen
         name="Recent Expenses Screen"
         component={RecentExpenses}
         options={{
@@ -33,7 +45,7 @@ const ExpensesOverview = () => {
           },
         }}
       />
-      <BottomTab.Screen
+      <BottomTabs.Screen
         name="All Expenses Screen"
         component={AllExpenses}
         options={{
@@ -44,22 +56,33 @@ const ExpensesOverview = () => {
           },
         }}
       />
-    </BottomTab.Navigator>
+    </BottomTabs.Navigator>
   );
 };
 
 export default function App() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: GlobalStyle.colors.primary500 },
+            headerTintColor: "white",
+          }}
+        >
           <Stack.Screen
             name="ExpensesOverview"
             component={ExpensesOverview}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Manage Expense" component={ManageExpense} />
+          <Stack.Screen
+            name="ManageExpense"
+            component={ManageExpense}
+            options={{
+              presentation: "modal",
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>
